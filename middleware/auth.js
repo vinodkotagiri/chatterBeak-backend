@@ -7,7 +7,15 @@ function isAuth(req, res, next) {
 	const verification = verifyToken(token, process.env.JWT_SECRET)
 	if (verification.error) return res.status(401).send('Invalid token')
 	req.user = verification.user
+	// console.log(req.user)
+	next()
+}
+function authSocket(socket, next) {
+	let token = socket.handshake.auth?.token
+	const verification = verifyToken(token, process.env.JWT_SECRET)
+	if (verification.error) return res.status(401).send('Invalid token')
+	socket.user = verification.user
 	next()
 }
 
-module.exports = { isAuth }
+module.exports = { isAuth, authSocket }
